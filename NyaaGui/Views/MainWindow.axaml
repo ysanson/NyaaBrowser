@@ -15,6 +15,20 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  <StackPanel VerticalAlignment="Center" Spacing="5" MaxWidth="350">
+    <Button Command="{Binding RefreshList}" Content="Refresh the list" />
+    <ListBox ItemsSource="{Binding Torrents}">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Name}" Margin="0,0,10,0"/>
+            <TextBlock Text="{Binding Category}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </StackPanel>
 
+ 
+    
 </Window>
