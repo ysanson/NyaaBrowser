@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyAnimeApi.src.models
 {
-    internal record class AnimeInfo
+    public record class AnimeInfo
     (
         int Id,
         string Title,
