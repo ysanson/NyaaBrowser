@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:vm="using:NyaaGui.ViewModels"
              x:DataType="vm:EpisodeViewModel"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="200"
@@ -15,8 +16,8 @@
   <StackPanel Spacing="5" Width="200">
     <Border CornerRadius="10" ClipToBounds="True">
       <Panel Background="#7FFF22DD">
-        <Image Width="200" Stretch="Uniform" />
-        <Panel Height="200">
+        <Image asyncImageLoader:ImageLoader.Source="{Binding AnimeCover}" Width="200" Stretch="Uniform"/>
+        <Panel Height="200" IsVisible="{Binding AnimeCover, Converter={x:Static StringConverters.IsNullOrEmpty}}">
           <PathIcon Height="75" Width="75" Data="{StaticResource video_clip_regular}" />
         </Panel>
       </Panel>

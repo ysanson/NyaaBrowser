@@ -12,6 +12,8 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System;
 using NyaaGui.Models;
+using System.Threading;
+using Avalonia.Media.Imaging;
 
 namespace NyaaGui.ViewModels
 {
@@ -20,10 +22,9 @@ namespace NyaaGui.ViewModels
         private readonly ObservableCollection<EpisodeViewModel> _torrents = [];
         private EpisodeViewModel? _selectedEpisode;
         public ICommand RefreshList { get; }
-
         public ObservableCollection<EpisodeViewModel> Torrents {  get { return _torrents; } }
-
         public EpisodeViewModel? SelectedEpisode { get => _selectedEpisode; set => this.RaiseAndSetIfChanged(ref _selectedEpisode, value); }
+        private CancellationTokenSource? _cancellationTokenSource;
 
         private string? _searchText;
         private bool _isBusy;
@@ -63,12 +64,15 @@ namespace NyaaGui.ViewModels
 
         private async void DoSearch(string? s)
         {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = _cancellationTokenSource.Token;
             IsBusy = true;
             _torrents?.Clear();
 
             if (!string.IsNullOrEmpty(s))
             {
-                await foreach (var episode in Episode.SearchAsync(s, default))
+                await foreach (var episode in Episode.SearchAsync(s, cancellationToken))
                 {
                     var vm = new EpisodeViewModel(episode);
                     _torrents?.Add(vm);

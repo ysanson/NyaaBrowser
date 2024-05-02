@@ -3,7 +3,9 @@ using MyAnimeApi.src.models;
 using NyaapiDotnet.Service;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,15 +33,14 @@ namespace NyaaGui.Models
             var torrents = _service.SearchTorrents(search: searchTerm, token: token);
             await foreach (var x in torrents)
             {
-                AnimeInfo? myAnimeList = await _malClient.GetAnimeInfoByName(x.CleanName, token);
-                if (myAnimeList is null)
+                string? imageUrl = await _malClient.GetPictureByAnimeName(x.CleanName, token);
+                if (imageUrl is null)
                 {
                     yield return new Episode(x.Id, x.Name, x.Date, x.Category, x.SubCategory, x.Magnet, x.TorrentAddress, "");
-
                 }
                 else
                 {
-                    yield return new Episode(x.Id, x.Name, x.Date, x.Category, x.SubCategory, x.Magnet, x.TorrentAddress, myAnimeList.MediumPicture);
+                    yield return new Episode(x.Id, x.Name, x.Date, x.Category, x.SubCategory, x.Magnet, x.TorrentAddress, imageUrl);
                 }
             }
         }
