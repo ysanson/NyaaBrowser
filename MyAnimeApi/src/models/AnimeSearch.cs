@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 
 namespace MyAnimeApi.src.models
 {
-    public record AnimeSearchResult([property: JsonPropertyName("data")]List<AnimeSearch> Results);
+    public record AnimeSearchResult([property: JsonPropertyName("data")]List<AnimeNode> Results);
+
+    public record AnimeNode(AnimeSearch Node);
+
     public record class AnimeSearch (
-        [property: JsonPropertyName("node.id")] int Id,
-        [property: JsonPropertyName("node.title")] string Title
+        int Id,
+        string Title,
+        [property: JsonPropertyName("main_picture")] Pictures Pictures
+    );
+
+    public record Pictures (
+        string Medium,
+        string Large
     );
 }

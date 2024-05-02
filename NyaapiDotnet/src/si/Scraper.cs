@@ -6,12 +6,14 @@ using AngleSharp.Dom;
 using NyaapiDotnet.Models;
 using NyaapiDotnet.Si.Models;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace NyaapiDotnet.Si
 {
     public partial class Scraper
     {
-        public async IAsyncEnumerable<Torrent> ScrapeTorrent(SiRequestParams queryParams)
+        public async IAsyncEnumerable<Torrent> ScrapeTorrent(SiRequestParams queryParams, [EnumeratorCancellation] CancellationToken token = default)
         {
             string queryUrl = queryParams.buildQueryParams();
             string url = $"{SiConstants.url}/?{queryUrl}";
@@ -21,7 +23,7 @@ namespace NyaapiDotnet.Si
             // Create a new browsing context
             var context = BrowsingContext.New(config);
             // This is where the HTTP request happens, returns <IDocument> that we can query later
-            var document = await context.OpenAsync(url);
+            var document = await context.OpenAsync(url, token);
             var torrentRows = document.QuerySelectorAll("tr.default");
             foreach(var row in torrentRows)
             {
@@ -54,7 +56,7 @@ namespace NyaapiDotnet.Si
             }
         }
 
-        private IElement GetNthTd(IElement input, int element)
+        private static IElement GetNthTd(IElement input, int element)
         {
             return input.QuerySelector($"td:nth-child({element})");
         }

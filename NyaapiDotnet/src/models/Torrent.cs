@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using NyaapiDotnet.Si.Models;
+using static AnitomySharp.AnitomySharp;
 
 namespace NyaapiDotnet.Models
 {
-    public record Torrent
+    public partial record Torrent
     {
         public long Id { get; init; }
         public string Name { get; init; }
@@ -17,6 +19,8 @@ namespace NyaapiDotnet.Models
         public int Leechers { get; init; }
         public bool Completed { get; init; }
         public string Status { get; init; }
+
+        public string CleanName => Parse(Name).SingleOrDefault(x => x.Category == AnitomySharp.Element.ElementCategory.ElementAnimeTitle).Value;
 
         public Torrent(SiTorrent siTorrent)
         {

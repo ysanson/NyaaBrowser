@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using NyaapiDotnet.Models;
 using NyaapiDotnet.Interfaces;
 using NyaapiDotnet.Si.Models;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace NyaapiDotnet.Si
 {
@@ -16,10 +18,10 @@ namespace NyaapiDotnet.Si
             scraper = new Scraper();
         }
 
-        public async IAsyncEnumerable<Torrent> SearchTorrents(Fansubs fansubs, Quality quality, string search, int limit, int page)
+        public async IAsyncEnumerable<Torrent> SearchTorrents(Fansubs fansubs, Quality quality, string search, int limit, int page, [EnumeratorCancellation] CancellationToken token = default)
         {
             var queryParams = CreateParams(fansubs, quality, search, limit, page);
-            await foreach (Torrent t in scraper.ScrapeTorrent(queryParams))
+            await foreach (Torrent t in scraper.ScrapeTorrent(queryParams, token))
             {
                 yield return t;
             }

@@ -7,7 +7,10 @@
         x:Class="NyaaGui.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="NyaaGui">
+        Title="NyaaGui"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -15,20 +18,33 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-  <StackPanel VerticalAlignment="Center" Spacing="5" MaxWidth="350">
-    <Button Command="{Binding RefreshList}" Content="Refresh the list" />
-    <ListBox ItemsSource="{Binding Torrents}">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Name}" Margin="0,0,10,0"/>
-            <TextBlock Text="{Binding Category}"/>
-          </StackPanel>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
-  </StackPanel>
+  <Panel>
+    <ExperimentalAcrylicBorder IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial
+            BackgroundSource="Digger"
+            TintColor="Black"
+            TintOpacity="1"
+            MaterialOpacity="0.65" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+    <Panel Margin="40">
+      <StackPanel DockPanel.Dock="Top">
+        <TextBox Text="{Binding SearchText}" Watermark="Search for animes..." />
+        <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
+      </StackPanel>
+      <Button Command="{Binding RefreshList}" HorizontalAlignment="Right" VerticalAlignment="Top">
+        <PathIcon Data="{StaticResource arrow_sync_circle_regular}" />
+      </Button>
 
- 
+      <ListBox ItemsSource="{Binding Torrents}" SelectedItem="{Binding SelectedEpisode}" Background="Transparent" Margin="0 40">
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel />
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+      </ListBox>
+    </Panel>
+  </Panel>
     
 </Window>
