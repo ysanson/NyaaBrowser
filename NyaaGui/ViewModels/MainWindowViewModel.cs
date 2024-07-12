@@ -14,34 +14,36 @@ using System;
 using NyaaGui.Models;
 using System.Threading;
 using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Binding;
+using System.Reactive;
 
 namespace NyaaGui.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ObservableObject
     {
         private readonly ObservableCollection<EpisodeViewModel> _torrents = [];
-        private EpisodeViewModel? _selectedEpisode;
         public ICommand RefreshList { get; }
         public ObservableCollection<EpisodeViewModel> Torrents {  get { return _torrents; } }
-        public EpisodeViewModel? SelectedEpisode { get => _selectedEpisode; set => this.RaiseAndSetIfChanged(ref _selectedEpisode, value); }
+        [ObservableProperty]
+        private EpisodeViewModel? _selectedEpisode;
         private CancellationTokenSource? _cancellationTokenSource;
+        public Interaction<EpisodeDetailsWindowViewModel, bool?> ShowDetails { get; }
+        public ICommand ShowDetailsCommand { get; }
 
+        [ObservableProperty]
         private string? _searchText;
+        [ObservableProperty]
         private bool _isBusy;
 
-        public string? SearchText
-        {
-            get => _searchText;
-            set => this.RaiseAndSetIfChanged(ref _searchText, value);
-        }
-
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set => this.RaiseAndSetIfChanged(ref _isBusy, value);
-        }
-
-        public MainWindowViewModel() { 
+        public MainWindowViewModel() {
+            ShowDetails = new Interaction<EpisodeDetailsWindowViewModel, bool?>();
+            ShowDetailsCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var details = new EpisodeDetailsWindowViewModel();
+                var result = await ShowDetails.Handle(details);
+            });
+            
             RefreshList = ReactiveCommand.Create(InitList);
             this.WhenAnyValue(x => x.SearchText)
                 .Throttle(TimeSpan.FromMilliseconds(400))
@@ -80,6 +82,14 @@ namespace NyaaGui.ViewModels
             }
 
             IsBusy = false;
+        }
+
+        partial void OnSelectedEpisodeChanged(EpisodeViewModel? value)
+        {
+            if (value != null)
+            {
+               ShowDetailsCommand.Execute(null);
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ namespace NyaaGui.ViewModels
             get
             {
                 if (_elements is null) return "";
-                var titleElem = _elements.SingleOrDefault(x => x.Category == AnitomySharp.Element.ElementCategory.ElementAnimeTitle);
+                var titleElem = _elements.FirstOrDefault(x => x.Category == AnitomySharp.Element.ElementCategory.ElementAnimeTitle);
                 if (titleElem == null) return "";
                 else return titleElem.Value;
             }
@@ -32,7 +32,7 @@ namespace NyaaGui.ViewModels
             get
             {
                 if (_elements is null) return "0";
-                var elem = _elements.SingleOrDefault(x => x.Category == AnitomySharp.Element.ElementCategory.ElementEpisodeNumber);
+                var elem = _elements.FirstOrDefault(x => x.Category == AnitomySharp.Element.ElementCategory.ElementEpisodeNumber);
                 if (elem == null) return "0";
                 else return elem.Value;
             }
